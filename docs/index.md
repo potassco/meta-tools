@@ -4,7 +4,7 @@ hide:
   - toc
 ---
 
-# fillname
+# meta_tools
 
 !!! info
-    *fillname* is part of the [Potassco](https://potassco.org) suite.
+    *meta_tools* is part of the [Potassco](https://potassco.org) suite.

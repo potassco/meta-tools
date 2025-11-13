@@ -10,14 +10,14 @@ hide:
 === "Pip"
 
     ```console
-    pip install fillname
+    pip install meta_tools
     ```
 
 === "Development mode"
 
     ```console
-    git clone https://github.com/potassco/fillname.git/
-    cd fillname
+    git clone https://github.com/potassco/meta_tools.git/
+    cd meta_tools
     pip install -e .[all]
     ```
 
@@ -31,5 +31,5 @@ hide:
 Details about the command line usage can be found with:
 
 ```console
-fillname -h
+meta_tools -h
 ```

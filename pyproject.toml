@@ -3,8 +3,8 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fillname"
-authors = [{ name = "Author Fillname", email = "author@fillname.org" }]
+name = "meta_tools"
+authors = [{ name = "Susana Hahn", email = "hahnmartinlu@uni-potsdam.de" }]
 description = "A template project."
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
@@ -12,7 +12,7 @@ dynamic = ["version"]
 readme = "README.md"
 
 [project.urls]
-Homepage = "https://fillname.org/"
+Homepage = "https://github.com/krr-up/meta-tools.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
@@ -20,10 +20,10 @@ lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]"]
 doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "mkdoclingo"]
-dev = ["fillname[test,typecheck,lint_pylint]"]
+dev = ["meta_tools[test,typecheck,lint_pylint]"]
 
 [project.scripts]
-fillname = "fillname.__main__:main"
+meta_tools = "meta_tools.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -66,8 +66,8 @@ variable-rgx = "^[a-z][a-z0-9]*((_[a-z0-9]+)*_?)?$"
 good-names = ["_"]
 
 [tool.coverage.run]
-source = ["fillname", "tests"]
-omit = ["*/fillname/__main__.py"]
+source = ["meta_tools", "tests"]
+omit = ["*/meta_tools/__main__.py"]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]
