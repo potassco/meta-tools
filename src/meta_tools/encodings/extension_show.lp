@@ -1,0 +1,37 @@
+% Explicit show statements
+% Do not use #show pred/arity.
+% In python we add #show . if cleaning is enabled.
+
+#show theory_symbol(ID,S):theory_symbol(ID,S).
+#show atom_tuple(T):atom_tuple(T).
+#show atom_tuple(T,A):atom_tuple(T,A).
+
+% Active literal_tuple
+rule_general(H,B,normal(B)):-rule(H,normal(B)).
+rule_general(H,B,sum(B,G)):-rule(H,sum(B,G)).
+
+% This is hiding the literal_tuples used for the ouput because there is no rule_general
+active_literal_tuple(B):-
+    rule_general(H,B,X),
+    literal_tuple(B),
+    not hide(rule(H,X)).
+
+#show literal_tuple(B): literal_tuple(B), active_literal_tuple(B).
+#show literal_tuple(B,L): literal_tuple(B,L), not hide(atom(L)),not hide(atom(-L)), active_literal_tuple(B).
+#show rule(H,B):rule(H,B), not hide(rule(H,B)).
+
+
+
+% TODO: Only show the theory things that are not hidden,
+% this needs to be propagated from theory atoms to the rest of the theory parts
+% for now they are all jus hidden
+
+% active_theory_atom(A):-
+%     theory_atom(ID, ID_STR, ID_ET),
+%     not hide(atom(ID)).
+
+% active_theory_atom(A):-
+%     theory_atom(ID, ID_STR, ID_ET, ID_GUARD, ID_SYMBOL),
+%     not hide(atom(ID)).
+
+

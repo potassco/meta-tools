@@ -10,6 +10,7 @@ requires-python = ">=3.9"
 license = { file = "LICENSE" }
 dynamic = ["version"]
 readme = "README.md"
+dependencies = ["clingo>=5.6.0", "rich-argparse", "clingox", "clingraph"]
 
 [project.urls]
 Homepage = "https://github.com/krr-up/meta-tools.git/"
@@ -23,7 +24,7 @@ doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "mkdoclingo"]
 dev = ["meta_tools[test,typecheck,lint_pylint]"]
 
 [project.scripts]
-meta_tools = "meta_tools.__main__:main"
+reify = "meta_tools.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
