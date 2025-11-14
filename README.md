@@ -13,7 +13,7 @@ pip install .
 Run the following for basic usage information:
 
 ```bash
-meta_tools -h
+reify -h
 ```
 
 To generate and open the documentation, run

@@ -96,5 +96,12 @@ def get_parser() -> ArgumentParser:
         help="Use the classic reification from clingo without extensions.",
     )
 
+    parser.add_argument(
+        "--save-out",
+        action="store_true",
+        default=False,
+        help="Save temporary files during the reification process. A directory 'out' will be created for this purpose.",
+    )
+
     parser.add_argument("--version", "-v", action="version", version=f"%(prog)s {VERSION}")
     return parser

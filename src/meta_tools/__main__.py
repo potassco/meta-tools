@@ -9,9 +9,10 @@ from meta_tools.utils.logging import configure_logging
 from meta_tools.utils.parser import get_parser
 from meta_tools.extensions.show.show_extension import ShowExtension
 from meta_tools.extensions.tag.tag_extension import TagExtension
-from meta_tools import reify_files, classic_reify
+from meta_tools import classic_reify, transform_files, extend_reification
 from meta_tools.utils.visualization import visualize_reification
 from meta_tools.extensions import ReifyExtension
+from meta_tools.utils.theory import extend_with_theory_symbols
 
 log = logging.getLogger(__name__)
 
@@ -33,17 +34,29 @@ def main() -> None:
     log.debug(args)
     const_args = ["-c " + c for c in args.const] if args.const else []
 
+    def save_out(content: str, name: str) -> None:
+        if not args.save_out:
+            return
+        with open(name, "w") as f:
+            f.write(content)
+
     if args.classic:
-        extension = ReifyExtension()
-        program_str = extension.transform(args.files, "")
-        reified_program = "\n".join([str(s) + "." for s in classic_reify(const_args, program_str)])
-    else:
-        reified_program = reify_files(const_args, args.files, extensions, args.clean)
+        extensions = [ReifyExtension()]
 
+    program_str = transform_files(args.files, extensions)
+    save_out(program_str, "out/transformed.lp")
+    rsymbols = classic_reify(const_args + ["--preserve-facts=symtab"], program_str)
+    if not args.classic:
+        extend_with_theory_symbols(rsymbols)
+    reified_prg = "\n".join([f"{str(s)}." for s in rsymbols])
+    save_out(reified_prg, "out/reified_output_full.lp")
+    if not args.classic:
+        reified_prg = extend_reification(reified_out_prg=reified_prg, extensions=extensions, clean_output=args.clean)
+        save_out(reified_prg, "out/reified_output.lp")
     if args.view:
-        visualize_reification(reified_program, open=True)
+        visualize_reification(reified_prg, open=True)
 
-    sys.stdout.write(reified_program + "\n")
+    sys.stdout.write(reified_prg + "\n")
     exit(0)
 
 

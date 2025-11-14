@@ -11,6 +11,10 @@ def _visit_terms(thy: ReifiedTheory, cb: Callable[[ReifiedTheoryTerm], None]):
     Visit the terms occuring in the theory atoms of the given theory.
 
     This function does not recurse into terms.
+
+    Args:
+        thy (ReifiedTheory): The reified theory.
+        cb (Callable[[ReifiedTheoryTerm], None]): The callback to call for each term
     """
     for atm in thy:
         for elem in atm.elements:
@@ -29,6 +33,10 @@ def _term_symbols(term: ReifiedTheoryTerm, ret: Dict[int, Symbol]) -> None:
 
     Theory terms are evaluated using `clingox.theory.evaluate_unary` and added
     to the given dictionary using the index of the theory term as key.
+
+    Args:
+        term (ReifiedTheoryTerm): The theory term to represent.
+        ret (Dict[int, Symbol]): The dictionary to add the representation to.
     """
     if term.type == TheoryTermType.Function and is_operator(term.name):
         _term_symbols(term.arguments[0], ret)
@@ -43,6 +51,9 @@ def extend_with_theory_symbols(symbols: List[Symbol]) -> None:
     Add theory symbols to the given list of symbols.
 
     The theory symbols are represented using clingo's `clingo.Symbol` class.
+
+    Args:
+        symbols (List[Symbol]): The list of symbols to extend.
     """
     theory_symbols: Dict[int, Symbol] = {}
     thy = ReifiedTheory(symbols)

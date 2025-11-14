@@ -14,6 +14,19 @@ log = logging.getLogger(__name__)
 
 
 def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], clean_output: bool = True) -> str:
+    """
+
+    Extend the reification with the given extensions. It calls clingo with the reified program and the extension encodings.
+
+    Args:
+        reified_out_prg (str): The reified output program.
+        extensions (List[ReifyExtension]): The list of extensions to apply.
+        clean_output (bool, optional): Whether to clean the output by hiding non-essential atoms. Defaults to True.
+        If clean_output is True, it adds a "#show ." directive to hide all atoms not explicitly shown by the extensions or the `extension_show.lp` file.
+
+    Returns:
+        str: The extended reified program.
+    """
     ctl = Control(["--warn=none"])
     ctl.add("base", [], reified_out_prg)
     with path("meta_tools.encodings", "extension_show.lp") as encoding:
@@ -34,6 +47,15 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
 
 
 def classic_reify(ctl_args: List[str], program_string: str) -> List[Symbol]:
+    """
+    Reify the given program string using classic reification.
+
+    Args:
+        ctl_args (List[str]): The list of control arguments.
+        program_string (str): The program string to reify.
+    Returns:
+        List[Symbol]: The list of symbols defining the reification.
+    """
     ctl = Control(ctl_args)
     rsymbols = []
     reifier = Reifier(rsymbols.append, reify_steps=False)
@@ -43,45 +65,20 @@ def classic_reify(ctl_args: List[str], program_string: str) -> List[Symbol]:
     return rsymbols
 
 
-def reify_files(
-    ctl_args: List[str], file_paths: List[str], extensions: List[ReifyExtension], clean_output: bool = True
-) -> str:
+def transform_files(file_paths: List[str], extensions: List[ReifyExtension]) -> str:
     """
-    Reify the given files using the provided extensions.
+    Transform the given files using the provided extensions.
 
     Args:
-        ctl_args (List[str]): The list of clingo control arguments.
-        file_paths (List[str]): The list of file paths to reify.
-        extensions (List[ReifyExtension]): The list of extensions to use for reification.
-        clean_output (bool): Whether to clean the output by hiding non-essential atoms of the reification and auxiliary rules added by the extensions.
+        file_paths (List[str]): The list of file paths to transform.
+        extensions (List[ReifyExtension]): The list of extensions to use for transformation.
 
     Returns:
-        str: The reified program string.
+        str: The transformed program string.
     """
-    log.info("Reifying files: %s", file_paths)
     program_string = ""
-    # Apply each extension's transformation
     for extension in extensions:
-        log.info(f"Applying extension: {extension.__class__.__name__}")
+        log.info(f"Applying transformation for extension: {extension.__class__.__name__}")
         program_string = extension.transform(file_paths, program_string)
         file_paths = []  # Clear file paths after the first extension
-    log.info("Grounding...")
-
-    with open("out/transformed_input.lp", "w") as f:
-        f.write(program_string)
-
-    # Reify
-    rsymbols = classic_reify(ctl_args + ["--preserve-facts=symtab"], program_string)
-
-    # Do we want to have this always?
-    extend_with_theory_symbols(rsymbols)
-    reified_prg_og = "\n".join([f"{str(s)}." for s in rsymbols])
-
-    # Generate final reified program with theory tags
-    with open("out/reified_output_full.lp", "w") as f:
-        f.write(reified_prg_og)
-
-    reified_prg = extend_reification(reified_out_prg=reified_prg_og, extensions=extensions, clean_output=clean_output)
-    with open("out/reified_output_clean.lp", "w") as f:
-        f.write(reified_prg)
-    return reified_prg
+    return program_string
