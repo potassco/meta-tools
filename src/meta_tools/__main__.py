@@ -21,8 +21,8 @@ def main() -> None:
     Run the main function.
     """
     extensions = [
-        ShowExtension(),
         TagExtension(),
+        ShowExtension(),
     ]
     parser = get_parser()
     for ext in extensions:

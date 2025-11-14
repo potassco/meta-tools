@@ -10,7 +10,7 @@ tag_theory_atom(L,tag_atom(T,A)):-theory_atom(L,ID_O,_),
                         theory_symbol(ID_O,tag_atom(T,A)).
 
 % Hide rules and atom that are auxiliary for tagging
-hide(rule(H,normal(B))):-
+hide((rule(H,normal(B));literal_tuple(B))):-
     rule(H,normal(B)),
     literal_tuple(B,-L), tag_theory_atom(L,tag_atom(_,_)).
 
@@ -21,6 +21,7 @@ hide(theory_symbol(ID_O,tag_atom(T,A))):-
 
 hide(theory_symbol(ID_O,tag_rule(T))):-
     theory_symbol(ID_O,tag_rule(T)).
+
 % Output tagging information
 
 tag(rule(H,normal(B)),F):-

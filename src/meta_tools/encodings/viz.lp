@@ -21,6 +21,7 @@ node(P):-atom(E,P).
 attr(node, P, shape, box):- atom(E, P).
 attr(node, P, fillcolor, atom_color):- atom(E, P).
 attr(node, P, (label,value), S):- atom(E, P),  symbol_literal(S,E).
+attr(node, P, tooltip, symbol_literal(S,E)):- atom(E, P),  symbol_literal(S,E).
 % attr(node, rule(H,B), (label,value), S):- rule(H,B),  tag(rule(H,B),rule_fo(S)).
 
 
@@ -39,7 +40,7 @@ attr(graph_edges, default, dir, both).
 attr(graph_edges, default, arrowtail, none).
 attr(graph_edges, default, arrowhead, none).
 
-attr(node,N,label,"<{{name}}{% if value is defined %} <br/><br/> <FONT POINT-SIZE='15pt'> <i><b>{{value}} </b></i></FONT> {% else %} {% endif %}>") :- node(N).
+attr(node,N,label,"<<FONT FACE='Monospace' POINT-SIZE='9pt'>{{name}}</FONT>{% if value is defined %} <br/><br/> <FONT POINT-SIZE='10pt'> <i><b>{{value}} </b></i></FONT> {% else %} {% endif %}>") :- node(N).
 attr(node,N,(label,name),@html_escape(N)) :- node(N).
 attr(node,N,style,filled) :- node(N), not attr(node,N,shape,plaintext).
 attr(edge,(N1,N2),fontsize,8):-edge((N1,N2)).
@@ -59,8 +60,8 @@ attr(node,rule(H,B),shape,box) :- node(rule(H,B)).
 attr(node,rule(H,B),fillcolor,rule_color) :- node(rule(H,B)).
 
 
-% node(output(S,L)):- output(S,L).
-% attr(node, output(S,L), shape, plaintext):- node(output(S,L)).
+node(output(S,L)):- output(S,L).
+attr(node, output(S,L), shape, plaintext):- node(output(S,L)).
 % attr(node, output(S,L), (label,value), S):- node(output(S,L)).
 
 node(atom_tuple(A,E)) :- atom_tuple(A,E).
@@ -79,8 +80,8 @@ attr(edge,(literal_tuple(B),show(O,B)),style,dotted) :- show(O,B).
 tag_escaped(X,@replace(T,":","")):-tag(X,T).
 node(tag(X,T)) :- tag_escaped(X,T).
 attr(node,tag(X,T), (label,value), @concat("@",T)) :- tag_escaped(X,T).
-attr(node,tag(X,T), fillcolor, show_color) :- tag_escaped(X,T).
-% attr(node,tag(X,T), shape, plaintext) :- tag_escaped(X,T).
+attr(node,tag(X,T), fillcolor, none) :- tag_escaped(X,T).
+attr(node,tag(X,T), shape, none) :- tag_escaped(X,T).
 edge((rule(H,B),tag(rule(H,B),T))) :- tag_escaped(rule(H,B),T).
 edge((atom_tuple(X,A),tag(atom(A),T))) :- tag_escaped(atom(A),T), atom_tuple(X,A).
 % attr(edge,(literal_tuple(B),tag(X,T)),style,dotted) :- tag(X,T).
@@ -88,9 +89,13 @@ edge((atom_tuple(X,A),tag(atom(A),T))) :- tag_escaped(atom(A),T), atom_tuple(X,A
 % node(atom_tuple(I,E)) :- atom_tuple(I,E), E>0.
 attr(node, P, shape, box):- atom(E,P).
 attr(node, literal_tuple(L,E), (label,value), S):- literal_tuple(L,E), symbol_literal(S,E).
+attr(node, literal_tuple(L,E), tooltip, symbol_literal(S,E)):- literal_tuple(L,E), symbol_literal(S,E).
 attr(node, literal_tuple(L,E), (label,value), @concat("-",S)):- literal_tuple(L,E), symbol_literal(S,-E).
+attr(node, literal_tuple(L,E), tooltip, symbol_literal(S,-E)):- literal_tuple(L,E), symbol_literal(S,-E).
 attr(node, literal_tuple(L,E), (label,value), @format("<FONT COLOR='blue'>&amp;{0}</FONT>",S)):- literal_tuple(L,E), theory_atom(E,N,_), theory_symbol(N,S).
+attr(node, literal_tuple(L,E), tooltip, theory_symbol(N,S)):- literal_tuple(L,E), theory_atom(E,N,_), theory_symbol(N,S).
 attr(node, literal_tuple(L,E), (label,value), @format("<FONT COLOR='blue'>-&amp;{0}</FONT>",S)):- literal_tuple(L,E), theory_atom(-E,N,_), theory_symbol(N,S).
+attr(node, literal_tuple(L,E), tooltip, theory_symbol(N,S)):- literal_tuple(L,E), theory_atom(-E,N,_), theory_symbol(N,S).
 
 
 % attr(node,external(E,V),fillcolor,external_color) :- node(external(E,V)).
@@ -137,7 +142,7 @@ attr(edge,(literal_tuple(L),output(S,L)),style,dotted):-output(S,L).
 % -------- Theory
 
 theory_any_symbol(I,theory_number(I,N)):-theory_number(I,N).
-theory_any_symbol(I,theory_string(I,S)):-theory_string(I,S).
+theory_any_symbol(I,theory_string(I,@replace(S,":",""))):-theory_string(I,S).
 theory_any_symbol(I,theory_function(I,S,T)):-theory_function(I,S,T).
 theory_any_symbol(I,theory_sequence(I,tuple,T)):-theory_sequence(I,tuple,T).
 
