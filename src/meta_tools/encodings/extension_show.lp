@@ -2,7 +2,7 @@
 % Do not use #show pred/arity.
 % In python we add #show . if cleaning is enabled.
 
-#show theory_symbol(ID,S):theory_symbol(ID,S).
+#show theory_symbol(ID,S):theory_symbol(ID,S), not hide(theory_symbol(ID,S)).
 #show atom_tuple(T):atom_tuple(T).
 #show atom_tuple(T,A):atom_tuple(T,A).
 

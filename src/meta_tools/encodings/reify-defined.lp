@@ -81,6 +81,19 @@ Args:
      - `normal(B)`: Normal body with literals.
      - `sum(B, G)`: Sum body with literals and a threshold.
 *%
+
+%*
+external(A, V)
+............
+Specifies that atom `A` is external with value `V`.
+
+Args:
+    A (int): Atom numerical identifier.
+    V (int): Value of the external atom (false, true, release).
+*%
+#defined external/2.
+
+
 #defined rule/2.
 %*
 theory_number(ID, N)

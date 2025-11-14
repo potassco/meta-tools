@@ -89,5 +89,12 @@ def get_parser() -> ArgumentParser:
         help="Clean the output by hiding non-essential atoms of the reification and auxiliary rules added by the extensions.",
     )
 
+    parser.add_argument(
+        "--classic",
+        action="store_true",
+        default=False,
+        help="Use the classic reification from clingo without extensions.",
+    )
+
     parser.add_argument("--version", "-v", action="version", version=f"%(prog)s {VERSION}")
     return parser

@@ -16,7 +16,11 @@ hide(rule(H,normal(B))):-
 
 hide(atom(L)):-tag_theory_atom(L,_).
 
+hide(theory_symbol(ID_O,tag_atom(T,A))):-
+    theory_symbol(ID_O,tag_atom(T,A)).
 
+hide(theory_symbol(ID_O,tag_rule(T))):-
+    theory_symbol(ID_O,tag_rule(T)).
 % Output tagging information
 
 tag(rule(H,normal(B)),F):-

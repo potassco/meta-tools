@@ -5,7 +5,7 @@ The meta_tools project.
 import logging
 from typing import List
 from importlib.resources import path
-from clingo import Control
+from clingo import Control, Symbol
 from meta_tools.extensions import ReifyExtension
 from clingox.reify import Reifier
 from meta_tools.utils.theory import extend_with_theory_symbols
@@ -33,6 +33,16 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
     return "\n".join(result)
 
 
+def classic_reify(ctl_args: List[str], program_string: str) -> List[Symbol]:
+    ctl = Control(ctl_args)
+    rsymbols = []
+    reifier = Reifier(rsymbols.append, reify_steps=False)
+    ctl.register_observer(reifier)
+    ctl.add("base", [], program_string)
+    ctl.ground([("base", [])])
+    return rsymbols
+
+
 def reify_files(
     ctl_args: List[str], file_paths: List[str], extensions: List[ReifyExtension], clean_output: bool = True
 ) -> str:
@@ -50,7 +60,6 @@ def reify_files(
     """
     log.info("Reifying files: %s", file_paths)
     program_string = ""
-    ctl = Control(ctl_args + ["--preserve-facts=symtab"])
     # Apply each extension's transformation
     for extension in extensions:
         log.info(f"Applying extension: {extension.__class__.__name__}")
@@ -59,11 +68,7 @@ def reify_files(
     log.info("Grounding...")
 
     # Reify
-    rsymbols = []
-    reifier = Reifier(rsymbols.append, reify_steps=False)
-    ctl.register_observer(reifier)
-    ctl.add("base", [], program_string)
-    ctl.ground([("base", [])])
+    rsymbols = classic_reify(ctl_args + ["--preserve-facts=symtab"], program_string)
 
     # Do we want to have this always?
     extend_with_theory_symbols(rsymbols)

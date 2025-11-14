@@ -28,3 +28,5 @@ drive(brais).
 
 % @label("{} can't drink and drive",(P,))
 :-drink(P), drive(P).
+
+#external a.
