@@ -25,10 +25,12 @@ hide(theory_symbol(ID_O,tag_rule(T))):-
 
 tag(rule(H,normal(B)),F):-
     rule(H,normal(B)),
+    not hide(rule(H,normal(B))),
     literal_tuple(B,L), tag_theory_atom(L,tag_rule(F)).
 
-tag(rule(H,sum(B)),F):-
-    rule(H,sum(B)),
+tag(rule(H,sum(B,G)),F):-
+    rule(H,sum(B,G)),
+    not hide(rule(H,sum(B,G))),
     literal_tuple(B,L), tag_theory_atom(L,tag_rule(F)).
 
 tag(atom(E),T):-

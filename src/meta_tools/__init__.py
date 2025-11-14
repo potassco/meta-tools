@@ -67,6 +67,9 @@ def reify_files(
         file_paths = []  # Clear file paths after the first extension
     log.info("Grounding...")
 
+    with open("out/transformed_input.lp", "w") as f:
+        f.write(program_string)
+
     # Reify
     rsymbols = classic_reify(ctl_args + ["--preserve-facts=symtab"], program_string)
 

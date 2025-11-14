@@ -3,12 +3,14 @@
 % In python we add #show . if cleaning is enabled.
 
 #show theory_symbol(ID,S):theory_symbol(ID,S), not hide(theory_symbol(ID,S)).
-#show atom_tuple(T):atom_tuple(T).
-#show atom_tuple(T,A):atom_tuple(T,A).
+#show atom_tuple(T):atom_tuple(T), not hide(atom_tuple(T)).
+% #show atom_tuple(T,A):atom_tuple(T,A).
+#show atom_tuple(T,A):atom_tuple(T,A), not hide(atom(A)).
 
 % Active literal_tuple
 rule_general(H,B,normal(B)):-rule(H,normal(B)).
 rule_general(H,B,sum(B,G)):-rule(H,sum(B,G)).
+
 
 % This is hiding the literal_tuples used for the ouput because there is no rule_general
 active_literal_tuple(B):-
@@ -19,7 +21,7 @@ active_literal_tuple(B):-
 #show literal_tuple(B): literal_tuple(B), active_literal_tuple(B).
 #show literal_tuple(B,L): literal_tuple(B,L), not hide(atom(L)),not hide(atom(-L)), active_literal_tuple(B).
 #show rule(H,B):rule(H,B), not hide(rule(H,B)).
-
+#show external(A,V):external(A,V).
 
 
 % TODO: Only show the theory things that are not hidden,

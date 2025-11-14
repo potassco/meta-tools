@@ -1,6 +1,7 @@
 
-
+% @domain :: a(X)
 {a(1..2)}.
-b(X):-a(X).
+b(X):-a(X),on.
 
 #show a/1.
+#show c(X):b(X),a(X).

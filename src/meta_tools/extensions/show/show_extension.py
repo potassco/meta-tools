@@ -1,4 +1,5 @@
 import logging
+from typing import Literal
 from clingo import Control
 from clingo import ast as _ast
 from importlib.resources import path
@@ -14,11 +15,11 @@ class ShowExtension(ReifyExtension):
         super().__init__()
         self.transformer = ShowTransformer()
 
-    # def visit_ast(self, ast: _ast.AST) -> _ast.AST:
-    #     """ """
-    #     Should re-write show statements into rules
-    #     new_ast = self.transformer.visit(ast)
-    #     return new_ast
+    def visit_ast(self, ast: _ast.AST) -> _ast.AST:
+        """ """
+        log.debug("Visiting AST for show extension.")
+        new_ast = self.transformer.visit(ast)
+        return new_ast
 
     def add_extension_encoding(self, ctl: Control) -> None:
         """ """
@@ -33,4 +34,29 @@ class ShowTransformer(_ast.Transformer):
     Its extension also adds a symbol table for the atoms.
     """
 
-    pass
+    show_fun_name: str = "_show"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.hide_all: bool = False
+
+    def visit_ShowTerm(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
+        loc = node.location
+        show_atom = _ast.Function(loc, self.show_fun_name, [_ast.SymbolicAtom(node.term)], False)
+        head = _ast.Literal(loc, _ast.Sign.NoSign, show_atom)
+        rule = _ast.Rule(loc, head, node.body)
+        return rule
+
+    def visit_ShowSignature(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
+        self.hide_all = True
+        loc = node.location
+        args = []
+        for i in range(node.arity):
+            args.append(_ast.Variable(loc, f"V{i}"))
+        sig_as_atom = _ast.Function(loc, node.name, args, False)
+        show_atom = _ast.Function(loc, self.show_fun_name, [sig_as_atom], False)
+        head = _ast.Literal(loc, _ast.Sign.NoSign, show_atom)
+        body = [_ast.Literal(loc, _ast.Sign.NoSign, sig_as_atom)]
+
+        rule = _ast.Rule(loc, head, body)
+        return rule

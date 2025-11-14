@@ -6,12 +6,12 @@
 #const neg_body_lit_color= @color(red).
 #const tab_color= @color(yellow,50).
 #const rule_color = @color(blue,50).
-#const external_color = @color(green,70).
+% #const external_color = @color(green,70).
 #const atom_color = @color(gray,50).
 #const theory_symbol_color = @color(purple,50).
+#const show_color = @color(green,50).
 
 #include "reify-defined.lp".
-
 
 atom(E, atom_tuple(A,E)):- atom_tuple(A,E), E>0.
 atom(E, external(E,V)):- external(E,V).
@@ -21,7 +21,7 @@ node(P):-atom(E,P).
 attr(node, P, shape, box):- atom(E, P).
 attr(node, P, fillcolor, atom_color):- atom(E, P).
 attr(node, P, (label,value), S):- atom(E, P),  symbol_literal(S,E).
-attr(node, rule(H,B), (label,value), S):- rule(H,B),  tag(rule(H,B),rule_fo(S)).
+% attr(node, rule(H,B), (label,value), S):- rule(H,B),  tag(rule(H,B),rule_fo(S)).
 
 
 attr(node, N, fillcolor, tab_color):- attr(node, N, shape, tab).
@@ -40,7 +40,7 @@ attr(graph_edges, default, arrowtail, none).
 attr(graph_edges, default, arrowhead, none).
 
 attr(node,N,label,"<{{name}}{% if value is defined %} <br/><br/> <FONT POINT-SIZE='15pt'> <i><b>{{value}} </b></i></FONT> {% else %} {% endif %}>") :- node(N).
-attr(node,N,(label,name),N) :- node(N).
+attr(node,N,(label,name),@html_escape(N)) :- node(N).
 attr(node,N,style,filled) :- node(N), not attr(node,N,shape,plaintext).
 attr(edge,(N1,N2),fontsize,8):-edge((N1,N2)).
 
@@ -68,7 +68,22 @@ node(literal_tuple(B,L)) :- literal_tuple(B,L).
 attr(node,literal_tuple(B,L),shape,box) :- literal_tuple(B,L).
 attr(node,literal_tuple(B,L),fillcolor,atom_color) :- literal_tuple(B,L).
 
+% Custom show
+node(show(O,B)) :- show(O,B).
+attr(node,show(O,B), fillcolor, show_color) :- show(O,B).
+edge((literal_tuple(B),show(O,B))) :- show(O,B).
+attr(edge,(literal_tuple(B),show(O,B)),style,dotted) :- show(O,B).
 
+
+% Custom tag
+tag_escaped(X,@replace(T,":","")):-tag(X,T).
+node(tag(X,T)) :- tag_escaped(X,T).
+attr(node,tag(X,T), (label,value), @concat("@",T)) :- tag_escaped(X,T).
+attr(node,tag(X,T), fillcolor, show_color) :- tag_escaped(X,T).
+% attr(node,tag(X,T), shape, plaintext) :- tag_escaped(X,T).
+edge((rule(H,B),tag(rule(H,B),T))) :- tag_escaped(rule(H,B),T).
+edge((atom_tuple(X,A),tag(atom(A),T))) :- tag_escaped(atom(A),T), atom_tuple(X,A).
+% attr(edge,(literal_tuple(B),tag(X,T)),style,dotted) :- tag(X,T).
 
 % node(atom_tuple(I,E)) :- atom_tuple(I,E), E>0.
 attr(node, P, shape, box):- atom(E,P).
@@ -78,7 +93,7 @@ attr(node, literal_tuple(L,E), (label,value), @format("<FONT COLOR='blue'>&amp;{
 attr(node, literal_tuple(L,E), (label,value), @format("<FONT COLOR='blue'>-&amp;{0}</FONT>",S)):- literal_tuple(L,E), theory_atom(-E,N,_), theory_symbol(N,S).
 
 
-attr(node,external(E,V),fillcolor,external_color) :- node(external(E,V)).
+% attr(node,external(E,V),fillcolor,external_color) :- node(external(E,V)).
 
 
 % Atoms as part of an atom tuple
@@ -136,7 +151,8 @@ attr(node,theory_string(I,S),(label,value),S):-theory_any_symbol(I,theory_string
 % attr(node,theory_number(I,N),shape,plaintext):-theory_any_symbol(I,theory_number(I,N)).
 attr(node,theory_number(I,N),(label,value),N):-theory_any_symbol(I,theory_number(I,N)).
 
-attr(node,theory_function(I,S,T),(label,value),N):-theory_any_symbol(I,theory_function(I,S,T)), theory_symbol(I,N).
+% attr(node,theory_function(I,S,T),(label,value),N):-theory_any_symbol(I,theory_function(I,S,T)), theory_symbol(I,N).
+attr(node,theory_function(I,S,T),(label,value),@format("<FONT COLOR='blue'>{0}</FONT>",N)):-theory_any_symbol(I,theory_function(I,S,T)), theory_symbol(I,N).
 
 
 edge((N,theory_tuple(T))):-theory_function(I,S,T), theory_any_symbol(I,N).
