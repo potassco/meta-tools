@@ -119,8 +119,8 @@ nav:
   - Examples: examples/index.md
   - Reference:
       - reference/index.md
-      - Problem: reference/problem/index.md
-      - Encodings: reference/encodings/index.md
+      - TagExtension: reference/extensions/tag.md
+      - ShowExtension: reference/extensions/show.md
       - API: reference/api/index.md
   - Community:
       - community/index.md

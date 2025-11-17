@@ -5,10 +5,13 @@ show(X,B):-
     symbol_literal(_show(X),L).
 
 #show show(X,B):show(X,B).
+#show show_hide:output(_show,B).
 
 % Symbol table
 symbol_literal(F,L):- output(F,B), literal_tuple(B,L).
-#show symbol_literal(F,L):symbol_literal(F,L).
+aux_show_atom(_show(X)):- symbol_literal(_show(X),L).
+aux_show_atom(_show):- symbol_literal(_show,L).
+#show symbol_literal(F,L):symbol_literal(F,L), not aux_show_atom(F).
 
 
 % Hiden predicates

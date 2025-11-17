@@ -31,5 +31,15 @@ hide:
 Details about the command line usage can be found with:
 
 ```console
-meta_tools -h
+reify -h
 ```
+
+This command will show the available options and extensions.
+
+The output of the reification will be printed to standard output. To save it to a file, use output redirection:
+
+```console
+reify input.lp > reified_output.lp
+```
+
+By default, both the [TagExtension](./reference/extensions/tag.md) and [ShowExtension](./reference/extensions/show.md) are enabled.
