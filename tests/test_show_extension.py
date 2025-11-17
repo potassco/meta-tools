@@ -2,11 +2,8 @@
 Test cases for main application functionality.
 """
 
-from io import StringIO
 from unittest import TestCase
 
-from meta_tools.utils import logging
-from meta_tools.utils.logging import configure_logging, get_logger
 from meta_tools.extensions.show.show_extension import ShowExtension
 
 

@@ -24,7 +24,7 @@ TAG_THEORY = """
 class TagExtension(ReifyExtension):
     """Extension to show the reified program."""
 
-    def __init__(self, include_fo=True, include_loc=False) -> None:
+    def __init__(self, include_fo: bool = True, include_loc: bool = False) -> None:
         """
         Initialize the Tag extension.
         Args:
@@ -75,7 +75,7 @@ class TagTransformer(_ast.Transformer):
     The rule_type can be one of "rule", "fact", or "constraint". It is determined based on the structure of the rule.
     """
 
-    def __init__(self, include_fo=True, include_loc=False) -> None:
+    def __init__(self, include_fo: bool = True, include_loc: bool = False) -> None:
         """
         Initialize the TagTransformer.
         Args:

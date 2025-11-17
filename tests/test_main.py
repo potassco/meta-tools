@@ -106,4 +106,3 @@ class TestMain(TestCase):
         self.assertNotIn('theory_string(0,"mytag")', reified_prg)
         self.assertNotIn("literal_tuple(0,2)", reified_prg)
         self.assertIn("tag(rule(disjunction(0),normal(0)),mytag)", reified_prg)
-        pass

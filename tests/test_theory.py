@@ -2,17 +2,10 @@
 Test cases for main application functionality.
 """
 
-from io import StringIO
 from unittest import TestCase
-import tempfile
 
-from meta_tools.utils import logging
-from meta_tools.utils.logging import configure_logging, get_logger
-from meta_tools import classic_reify, transform_files
-from meta_tools.extensions.tag.tag_extension import TAG_THEORY, TagExtension
-from meta_tools.extensions.show.show_extension import ShowExtension
+from meta_tools import classic_reify
 from meta_tools.utils.theory import extend_with_theory_symbols
-
 
 GRAMMAR = """
 #theory theory {
@@ -30,7 +23,7 @@ class TestTheory(TestCase):
     Test cases for main application functionality.
     """
 
-    def test_theory_symbols(self):
+    def test_theory_symbols(self) -> None:
         """
         Test function to get symbols in a theory.
         """

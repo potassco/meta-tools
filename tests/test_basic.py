@@ -2,12 +2,9 @@
 Test cases for main application functionality.
 """
 
-from io import StringIO
 from unittest import TestCase
 import tempfile
 
-from meta_tools.utils import logging
-from meta_tools.utils.logging import configure_logging, get_logger
 from meta_tools import classic_reify, transform_files
 from meta_tools.extensions.tag.tag_extension import TAG_THEORY, TagExtension
 from meta_tools.extensions.show.show_extension import ShowExtension
