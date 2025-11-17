@@ -4,7 +4,6 @@ The command line parser for the project.
 
 from argparse import ArgumentParser
 from importlib import metadata
-from textwrap import dedent
 from typing import Any, Optional, cast
 
 from rich_argparse import ArgumentDefaultsRichHelpFormatter
@@ -40,7 +39,7 @@ def get_parser() -> ArgumentParser:
     """
     parser = ArgumentParser(
         prog="reify",
-        description=ascii_art_reify + "\n🚀 Reify CLI - Extended reification for meta programming.",
+        description=ascii_art_reify + "\n🚀 Reify CLI - Extended reification for meta programming.",  # type: ignore
         formatter_class=ArgumentDefaultsRichHelpFormatter,
     )
     levels = [
@@ -86,7 +85,8 @@ def get_parser() -> ArgumentParser:
         "--clean",
         action="store_true",
         default=False,
-        help="Clean the output by hiding non-essential atoms of the reification and auxiliary rules added by the extensions.",
+        help="Clean the output by hiding non-essential atoms of the reification"
+        "and auxiliary rules added by the extensions.",
     )
 
     parser.add_argument(

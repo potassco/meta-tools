@@ -1,5 +1,5 @@
 import logging
-from typing import Literal
+from typing import List
 from clingo import Control
 from clingo import ast as _ast
 from importlib.resources import path
@@ -26,6 +26,15 @@ class ShowExtension(ReifyExtension):
         with path("meta_tools.extensions.show", "encoding.lp") as base_encoding:
             log.debug("Loading encoding: %s", base_encoding)
             ctl.load(str(base_encoding))
+
+    def transform(self, file_paths: List[str], program_string: str) -> str:
+        """
+        Adds rules to hide all atoms not explicitly shown.
+        """
+        prg = super().transform(file_paths, program_string)
+        if self.transformer.hide_all:
+            prg += f"{self.transformer.show_fun_name}.\n"
+        return prg
 
 
 class ShowTransformer(_ast.Transformer):

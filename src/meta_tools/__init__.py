@@ -5,10 +5,9 @@ The meta_tools project.
 import logging
 from typing import List
 from importlib.resources import path
+from clingox.reify import Reifier
 from clingo import Control, Symbol
 from meta_tools.extensions import ReifyExtension
-from clingox.reify import Reifier
-from meta_tools.utils.theory import extend_with_theory_symbols
 
 log = logging.getLogger(__name__)
 
@@ -16,13 +15,15 @@ log = logging.getLogger(__name__)
 def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], clean_output: bool = True) -> str:
     """
 
-    Extend the reification with the given extensions. It calls clingo with the reified program and the extension encodings.
+    Extend the reification with the given extensions.
+    It calls clingo with the reified program and the extension encodings.
 
     Args:
         reified_out_prg (str): The reified output program.
         extensions (List[ReifyExtension]): The list of extensions to apply.
         clean_output (bool, optional): Whether to clean the output by hiding non-essential atoms. Defaults to True.
-        If clean_output is True, it adds a "#show ." directive to hide all atoms not explicitly shown by the extensions or the `extension_show.lp` file.
+        If clean_output is True, it adds a "#show ." directive to hide all atoms
+        not explicitly shown by the extensions or the `extension_show.lp` file.
 
     Returns:
         str: The extended reified program.
@@ -57,7 +58,7 @@ def classic_reify(ctl_args: List[str], program_string: str) -> List[Symbol]:
         List[Symbol]: The list of symbols defining the reification.
     """
     ctl = Control(ctl_args)
-    rsymbols = []
+    rsymbols: List[Symbol] = []
     reifier = Reifier(rsymbols.append, reify_steps=False)
     ctl.register_observer(reifier)
     ctl.add("base", [], program_string)
@@ -78,7 +79,7 @@ def transform_files(file_paths: List[str], extensions: List[ReifyExtension]) -> 
     """
     program_string = ""
     for extension in extensions:
-        log.info(f"Applying transformation for extension: {extension.__class__.__name__}")
+        log.info("Applying transformation for extension: %s", extension.__class__.__name__)
         program_string = extension.transform(file_paths, program_string)
         file_paths = []  # Clear file paths after the first extension
     return program_string

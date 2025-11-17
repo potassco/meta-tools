@@ -24,23 +24,46 @@ TAG_THEORY = """
 class TagExtension(ReifyExtension):
     """Extension to show the reified program."""
 
-    def __init__(self) -> None:
+    def __init__(self, include_fo=True, include_loc=False) -> None:
+        """
+        Initialize the Tag extension.
+        Args:
+            include_fo (bool): Whether to include first-order representation for each rule as a tag.
+            include_loc (bool): Whether to include location information in the tags.
+        """
         super().__init__()
-        self.transformer = TagTransformer()
+        self.transformer = TagTransformer(include_fo=include_fo, include_loc=include_loc)
 
     def visit_ast(self, ast: _ast.AST) -> _ast.AST:
-        """ """
+        """
+        Visit and transform the AST.
+        Args:
+            ast (_ast.AST): The abstract syntax tree to visit.
+        Returns:
+            _ast.AST: The transformed abstract syntax tree.
+        """
         new_ast = self.transformer.visit(ast)
         return new_ast
 
     def transform(self, file_paths: list[str], program_string: str) -> str:
-        """ """
+        """
+        Transform the program string by adding the tag theory.
+        Args:
+            file_paths (list[str]): The list of file paths to process.
+            program_string (str): The program string to process.
+        Returns:
+            str: The transformed program string with the tag theory appended.
+        """
         new_prg = super().transform(file_paths, program_string)
         new_prg += TAG_THEORY + "\n"
         return new_prg
 
     def add_extension_encoding(self, ctl: Control) -> None:
-        """ """
+        """
+        Add the extension encoding to the clingo control. This extension creates the tag/2 predicate.
+        Args:
+            ctl (Control): The clingo control object.
+        """
         with path("meta_tools.extensions.tag", "encoding.lp") as base_encoding:
             log.debug("Loading encoding: %s", base_encoding)
             ctl.load(str(base_encoding))
@@ -52,28 +75,50 @@ class TagTransformer(_ast.Transformer):
     The rule_type can be one of "rule", "fact", or "constraint". It is determined based on the structure of the rule.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, include_fo=True, include_loc=False) -> None:
+        """
+        Initialize the TagTransformer.
+        Args:
+            include_fo (bool): Whether to include first-order representation for each rule as a tag
+            include_loc (bool): Whether to include location information in the tags.
+        """
         super().__init__()
-        self._rule_tags = set([])
-        self._atom_rules = set([])
+        self._rule_tags: set[_ast.AST] = set([])
+        self._atom_rules: set[_ast.AST] = set([])
+        self._include_fo = include_fo
+        self._include_loc = include_loc
 
     def _save_rule_tag(self, node: _ast.AST) -> None:
-        """ """
+        """
+        Save the rule tag from the AST node to be added to the next rule
+        Args:
+            node (_ast.AST): The AST node to process.
+        Returns:
+            None
+        """
         if node.ast_type == _ast.ASTType.Rule:
             literal = node.head
             if literal.atom.ast_type == _ast.ASTType.SymbolicAtom:
                 self._rule_tags.add(literal.atom.symbol)
 
     def _save_atom_rule(self, node: _ast.AST) -> None:
-        """ """
+        """
+        Save the atom tagging rule to be added to the program
+        Args:
+            node (_ast.AST): The AST node to process.
+        """
         if node.ast_type == _ast.ASTType.Rule:
             self._atom_rules.add(node)
 
     def _handle_comment(self, node: _ast.AST) -> Optional[str]:
-        """ """
+        """
+        Handle the comment node to extract tags for atoms or rules.
+        Args:
+            node (_ast.AST): The AST comment node to process.
+        Returns:
+            Optional[str]: "atom" if an atom tag was found, "rule" if a rule tag was found, None otherwise.
+        """
 
-        regex_atom = r"^\s*%\s*@([^\n]+?)\s*::\s*(.*)$"
-        match = re.match(regex_atom, node.value)
         head = None
         body = None
 
@@ -81,13 +126,11 @@ class TagTransformer(_ast.Transformer):
             """ """
             if node.ast_type == _ast.ASTType.Rule:
                 nonlocal head, body
-                if node.head is None:
-                    raise RuntimeError(
-                        "Expected head in the rule for tagging atoms. The head is the atom to be tagged."
-                    )
                 head = node.head
                 body = "".join([f", {b}" for b in node.body])
 
+        regex_atom = r"^\s*%\s*@([^\n]+?)\s*::\s*(.*)$"
+        match = re.match(regex_atom, node.value)
         if match:
             tag = match.group(1)
             arg_2_rule = match.group(2).replace(":", ":-") + "."
@@ -95,7 +138,7 @@ class TagTransformer(_ast.Transformer):
                 parse_string(arg_2_rule, _save_head_body)
             except Exception as e:
                 sys.stderr.write(
-                    f"\033[91mError parsing tags, in the atom tag {node}, everything after `:` should be a rule without `.`\n\033[0m"
+                    f"\033[91mError parsing tags, in the atom tag {node}, everything after `::` should have the form of a poll using : and without `.`\n\033[0m"
                 )
                 sys.stderr.write(f"\033[91mTried to parse an invalid rule: {arg_2_rule}\n\033[0m")
                 raise e
@@ -127,7 +170,15 @@ class TagTransformer(_ast.Transformer):
 
         return None
 
-    def _construct_theory_atom_literal(self, location, function):
+    def _construct_theory_atom_literal(self, location: _ast.Location, function: _ast.AST) -> _ast.AST:
+        """
+        Generate a theory atom literal for the given function.
+        Args:
+            location (_ast.Location): The location of the AST node.
+            function (_ast.AST): The function to be used in the theory atom.
+        Returns:
+            _ast.AST: The constructed theory atom literal.
+        """
         theory_tag = _ast.TheoryAtom(
             location=location,
             term=_ast.Function(location, "tag_rule", [function], 0),
@@ -137,8 +188,12 @@ class TagTransformer(_ast.Transformer):
         body_literal = _ast.Literal(location=location, sign=_ast.Sign.NoSign, atom=theory_tag)
         return body_literal
 
-    def _add_default_tag(self, node: _ast.AST) -> _ast.AST:
-        """ """
+    def _add_fo_tag(self, node: _ast.AST) -> None:
+        """
+        Add the first-order representation tag to the rule body.
+        Args:
+            node (_ast.AST): The AST rule node to process.
+        """
         f = (
             _ast.Function(
                 node.location,
@@ -159,9 +214,13 @@ class TagTransformer(_ast.Transformer):
 
         node.body.insert(len(node.body), theory_tag_literal)
 
-    def _add_saved_tags(self, node: _ast.AST) -> _ast.AST:
-        """ """
-        for fun in self._rule_tags:
+    def _add_saved_tags(self, node: _ast.AST) -> None:
+        """
+        Add saved tags to the rule body.
+        Args:
+            node (_ast.AST): The AST rule node to process.
+        """
+        for fun in sorted(list(self._rule_tags), key=lambda x: str(x)):
             theory_tag_literal = self._construct_theory_atom_literal(
                 node.location,
                 fun,
@@ -172,7 +231,9 @@ class TagTransformer(_ast.Transformer):
         self._rule_tags.clear()
 
     def visit_Comment(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
-        """ """
+        """
+        Handle comment nodes to extract tags.
+        """
         comment_tag_type = self._handle_comment(node)
 
         if comment_tag_type == "atom" and len(self._atom_rules) > 0:
@@ -180,9 +241,11 @@ class TagTransformer(_ast.Transformer):
         return node
 
     def visit_Rule(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
-        """ """
-
-        self._add_default_tag(node)
+        """
+        Handle rule nodes, it will add the saved tags and the FO tag if enabled.
+        """
+        if self._include_fo:
+            self._add_fo_tag(node)
         self._add_saved_tags(node)
 
         final_node = node.update(**self.visit_children(node))

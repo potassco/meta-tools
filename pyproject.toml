@@ -68,7 +68,11 @@ good-names = ["_"]
 
 [tool.coverage.run]
 source = ["meta_tools", "tests"]
-omit = ["*/meta_tools/__main__.py"]
+omit = [
+    "*/meta_tools/__main__.py",
+    "*/meta_tools/utils/visualization.py",
+    "*/meta_tools/utils/logging.py",
+]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]

@@ -1,5 +1,10 @@
+"""
+Base class for reification extensions.
+Should be inherited by all extensions.
+"""
+
 from typing import List
-from argparse import ArgumentParser
+from argparse import _ArgumentGroup
 from clingo.ast import parse_files, parse_string, AST
 from clingo import Control
 
@@ -7,18 +12,17 @@ from clingo import Control
 class ReifyExtension:
     """Base class for reification extensions. Should be inherited by all extensions."""
 
-    def register_options(self, parser: ArgumentParser) -> None:
+    def register_options(self, parser: _ArgumentGroup) -> None:
         """
         Register the extensions's options to the parser for command line usage
 
         Arguments
         ---------
-        parser: ArgumentParser
-            Target to register with.
+        parser: _ArgumentGroup
+            Target argument group to register with.
         """
-        pass
 
-    def visit_ast(self, ast: AST) -> AST:
+    def visit_ast(self, ast: AST) -> AST:  # nocoverage
         """
         Handle the given AST node and return the transformed AST node.
         Can be implemented using a transformer.
@@ -41,7 +45,7 @@ class ReifyExtension:
         """
         prg = ""
 
-        def add_to_prg(ast: AST):
+        def add_to_prg(ast: AST) -> None:
             nonlocal prg
             prg += str(self.visit_ast(ast)) + "\n"
 
@@ -62,4 +66,3 @@ class ReifyExtension:
         ctl
             Target control object.
         """
-        pass

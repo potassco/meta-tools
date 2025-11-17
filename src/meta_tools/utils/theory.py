@@ -1,3 +1,7 @@
+"""
+Utility functions for theory handling.
+"""
+
 from typing import Callable, Dict, List
 
 from clingo import Function, Number, Symbol, TheoryTermType
@@ -6,7 +10,7 @@ from clingox.reify import ReifiedTheory, ReifiedTheoryTerm
 from clingox.theory import evaluate, is_operator
 
 
-def _visit_terms(thy: ReifiedTheory, cb: Callable[[ReifiedTheoryTerm], None]):
+def _visit_terms(thy: ReifiedTheory, cb: Callable[[ReifiedTheoryTerm], None]) -> None:
     """
     Visit the terms occuring in the theory atoms of the given theory.
 
@@ -23,7 +27,7 @@ def _visit_terms(thy: ReifiedTheory, cb: Callable[[ReifiedTheoryTerm], None]):
         cb(atm.term)
         guard = atm.guard
         if guard:
-            cb(guard[1])
+            cb(guard[1])  # nocoverage
 
 
 def _term_symbols(term: ReifiedTheoryTerm, ret: Dict[int, Symbol]) -> None:

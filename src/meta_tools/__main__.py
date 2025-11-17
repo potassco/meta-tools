@@ -2,7 +2,6 @@
 The main entry point for the application.
 """
 
-from importlib.resources import files
 import sys
 import logging
 from meta_tools.utils.logging import configure_logging
@@ -37,7 +36,7 @@ def main() -> None:
     def save_out(content: str, name: str) -> None:
         if not args.save_out:
             return
-        with open(name, "w") as f:
+        with open(name, "w", encoding="utf-8") as f:
             f.write(content)
 
     if args.classic:
@@ -54,10 +53,10 @@ def main() -> None:
         reified_prg = extend_reification(reified_out_prg=reified_prg, extensions=extensions, clean_output=args.clean)
         save_out(reified_prg, "out/reified_output.lp")
     if args.view:
-        visualize_reification(reified_prg, open=True)
+        visualize_reification(reified_prg, open_browser=True)
 
     sys.stdout.write(reified_prg + "\n")
-    exit(0)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
