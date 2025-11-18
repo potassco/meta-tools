@@ -34,6 +34,3 @@ hide(atom_tuple(H)):-
 hide(literal_tuple(B)):-
     literal_tuple(B,L),
     symbol_literal(_show(X),L).
-
-
-

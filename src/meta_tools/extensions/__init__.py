@@ -3,10 +3,11 @@ Base class for reification extensions.
 Should be inherited by all extensions.
 """
 
-from typing import List
 from argparse import _ArgumentGroup
-from clingo.ast import parse_files, parse_string, AST
+from typing import List
+
 from clingo import Control
+from clingo.ast import AST, parse_files, parse_string
 
 
 class ReifyExtension:

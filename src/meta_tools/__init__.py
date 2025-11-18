@@ -3,10 +3,12 @@ The meta_tools project.
 """
 
 import logging
-from typing import List
 from importlib.resources import path
-from clingox.reify import Reifier
+from typing import List
+
 from clingo import Control, Symbol
+from clingox.reify import Reifier
+
 from meta_tools.extensions import ReifyExtension
 
 log = logging.getLogger(__name__)

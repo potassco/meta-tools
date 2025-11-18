@@ -1,12 +1,12 @@
 import logging
 import re
 import sys
+from importlib.resources import path
 from typing import Optional
 
-from clingo import String, Control
+from clingo import Control, String
 from clingo import ast as _ast
 from clingo.ast import parse_string
-from importlib.resources import path
 
 from meta_tools.extensions import ReifyExtension
 

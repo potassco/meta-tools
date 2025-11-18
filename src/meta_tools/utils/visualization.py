@@ -4,6 +4,7 @@ Visualization utilities for meta_tools using clingraph.
 
 import logging
 from importlib.resources import path
+
 from clingo import Control
 from clingraph.clingo_utils import ClingraphContext  # type: ignore
 from clingraph.graphviz import compute_graphs, render  # type: ignore

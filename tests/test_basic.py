@@ -2,12 +2,12 @@
 Test cases for main application functionality.
 """
 
-from unittest import TestCase
 import tempfile
+from unittest import TestCase
 
 from meta_tools import classic_reify, transform_files
-from meta_tools.extensions.tag.tag_extension import TAG_THEORY, TagExtension
 from meta_tools.extensions.show.show_extension import ShowExtension
+from meta_tools.extensions.tag.tag_extension import TAG_THEORY, TagExtension
 
 
 class TestMain(TestCase):

@@ -5,7 +5,6 @@ Utility functions for theory handling.
 from typing import Callable, Dict, List
 
 from clingo import Function, Number, Symbol, TheoryTermType
-
 from clingox.reify import ReifiedTheory, ReifiedTheoryTerm
 from clingox.theory import evaluate, is_operator
 

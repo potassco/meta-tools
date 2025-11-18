@@ -6,8 +6,8 @@ from argparse import ArgumentParser
 from importlib import metadata
 from typing import Any, Optional, cast
 
-from rich_argparse import ArgumentDefaultsRichHelpFormatter
 from rich.text import Text
+from rich_argparse import ArgumentDefaultsRichHelpFormatter
 
 from . import logging
 

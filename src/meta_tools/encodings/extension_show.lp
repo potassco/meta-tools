@@ -22,5 +22,3 @@
 % active_theory_atom(A):-
 %     theory_atom(ID, ID_STR, ID_ET, ID_GUARD, ID_SYMBOL),
 %     not hide(atom(ID)).
-
-

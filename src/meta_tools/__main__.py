@@ -2,16 +2,17 @@
 The main entry point for the application.
 """
 
-import sys
 import logging
-from meta_tools.utils.logging import configure_logging
-from meta_tools.utils.parser import get_parser
+import sys
+
+from meta_tools import classic_reify, extend_reification, transform_files
+from meta_tools.extensions import ReifyExtension
 from meta_tools.extensions.show.show_extension import ShowExtension
 from meta_tools.extensions.tag.tag_extension import TagExtension
-from meta_tools import classic_reify, transform_files, extend_reification
-from meta_tools.utils.visualization import visualize_reification
-from meta_tools.extensions import ReifyExtension
+from meta_tools.utils.logging import configure_logging
+from meta_tools.utils.parser import get_parser
 from meta_tools.utils.theory import extend_with_theory_symbols
+from meta_tools.utils.visualization import visualize_reification
 
 log = logging.getLogger(__name__)
 

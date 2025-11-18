@@ -1,8 +1,10 @@
 import logging
+from importlib.resources import path
 from typing import List
+
 from clingo import Control
 from clingo import ast as _ast
-from importlib.resources import path
+
 from meta_tools.extensions import ReifyExtension
 
 log = logging.getLogger(__name__)
