@@ -13,7 +13,7 @@ from . import logging
 
 __all__ = ["get_parser"]
 
-VERSION = metadata.version("meta_tools")
+VERSION = metadata.version("meta-tools-clingo")
 
 
 ascii_art_reify = Text(
