@@ -2,7 +2,7 @@
 
 ## Installation
 
-To install the project, run
+To install the project locally, run
 
 ```bash
 pip install .

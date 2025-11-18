@@ -10,7 +10,7 @@ hide:
 === "Pip"
 
     ```console
-    pip install meta_tools
+    pip install meta-tools-clingo
     ```
 
 === "Development mode"
