@@ -1,4 +1,3 @@
-from argparse import _ArgumentGroup
 import logging
 import re
 import sys
@@ -45,7 +44,6 @@ class TagExtension(ReifyExtension):
         """
         new_ast = self.transformer.visit(ast)
         return new_ast
-
 
     def transform(self, file_paths: list[str], program_string: str) -> str:
         """

@@ -115,4 +115,3 @@ This option can be added with `--view`, which will open a browser with the visua
 ## Mimic normal reification
 
 To obtain the normal clingo reification one can use the tag `--classic`
-

@@ -3,11 +3,13 @@
 As an example we will consider the encoding in `examples/people.lp`.
 
 `instance.lp`
+
 ```clingo
 --8<-- "examples/people/instance.lp"
 ```
 
 `encoding.lp`
+
 ```clingo
 --8<-- "examples/people/encoding.lp"
 ```
@@ -19,6 +21,7 @@ Using the command line one can reify the program with:
 ```
 
 `reified_output.lp`
+
 ```clingo
 symbol_literal(person(susana),4).
 symbol_literal(person(brais),5).
