@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "meta_tools"
+name = "meta-tools-clingo"
 authors = [{ name = "Susana Hahn", email = "hahnmartinlu@uni-potsdam.de" }]
 description = "A template project."
 requires-python = ">=3.10"
@@ -21,7 +21,7 @@ lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]"]
 doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "mkdoclingo"]
-dev = ["meta_tools[test,typecheck,lint_pylint]"]
+dev = ["meta-tools-clingo[test,typecheck,lint_pylint]"]
 
 [project.scripts]
 reify = "meta_tools.__main__:main"
