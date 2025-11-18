@@ -1,14 +1,4 @@
 % ----------
-%# Instance
-% Should not be expected to tagged manually, use atom tags
-
-person(susana;brais).
-height(susana,160).
-height(brais,180).
-drive(brais).
-
-
-% ----------
 %# Atom tags
 % @label("{} is driving",(P,)) :: drive(P)
 
@@ -19,8 +9,6 @@ drive(brais).
 
 % ----------
 %# Encoding
-% @myruletag
-% Tag will be added to the next rule found
 
 % @label("{} might be drink",(P,))
 % @disabled
@@ -28,5 +16,3 @@ drive(brais).
 
 % @label("{} can't drink and drive",(P,))
 :-drink(P), drive(P).
-
-#external a.
