@@ -5,7 +5,7 @@ The main entry point for the application.
 import logging
 import sys
 
-from meta_tools import classic_reify, extend_reification, transform_files
+from meta_tools import classic_reify, extend_reification, transform
 from meta_tools.extensions import ReifyExtension
 from meta_tools.extensions.show.show_extension import ShowExtension
 from meta_tools.extensions.tag.tag_extension import TagExtension
@@ -43,7 +43,7 @@ def main() -> None:
     if args.classic:
         extensions = [ReifyExtension()]
 
-    program_str = transform_files(args.files, extensions)
+    program_str = transform(args.files, extensions=extensions, prg="")
     save_out(program_str, "out/transformed.lp")
     rsymbols = classic_reify(const_args + ["--preserve-facts=symtab"], program_str)
     if not args.classic:

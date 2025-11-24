@@ -30,3 +30,6 @@ pip install .[doc]
 
 Instructions to install and use `nox` can be found in
 [DEVELOPMENT.md](./DEVELOPMENT.md)
+
+For details on the system check the
+[documentation page](https://github.com/potassco/meta-tools)

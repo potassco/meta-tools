@@ -8,7 +8,7 @@ from clingo import Control, String
 from clingo import ast as _ast
 from clingo.ast import parse_string
 
-from meta_tools.extensions import ReifyExtension
+from meta_tools.extensions.base_extension import ReifyExtension
 
 log = logging.getLogger(__name__)
 

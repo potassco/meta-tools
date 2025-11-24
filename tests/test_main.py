@@ -6,7 +6,7 @@ import tempfile
 from io import StringIO
 from unittest import TestCase
 
-from meta_tools import classic_reify, extend_reification, transform_files
+from meta_tools import classic_reify, extend_reification, transform
 from meta_tools.extensions.show.show_extension import ShowExtension
 from meta_tools.extensions.tag.tag_extension import TagExtension
 from meta_tools.utils import logging
@@ -63,7 +63,7 @@ class TestMain(TestCase):
             TagExtension(),
             ShowExtension(),
         ]
-        program_str = transform_files([temp_file_path1, temp_file_path2], extensions)
+        program_str = transform([temp_file_path1, temp_file_path2], extensions=extensions)
         rsymbols = classic_reify(["--preserve-facts=symtab"], program_str)
         extend_with_theory_symbols(rsymbols)
 
