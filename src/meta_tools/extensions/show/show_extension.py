@@ -5,7 +5,7 @@ from typing import List
 from clingo import Control
 from clingo import ast as _ast
 
-from meta_tools.extensions import ReifyExtension
+from meta_tools.extensions.base_extension import ReifyExtension
 
 log = logging.getLogger(__name__)
 

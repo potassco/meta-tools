@@ -4,7 +4,7 @@ The meta_tools project.
 
 import logging
 from importlib.resources import path
-from typing import List
+from typing import List, Optional
 
 from clingo import Control, Symbol
 from clingox.reify import Reifier
@@ -68,7 +68,7 @@ def classic_reify(ctl_args: List[str], program_string: str) -> List[Symbol]:
     return rsymbols
 
 
-def transform_files(file_paths: List[str], extensions: List[ReifyExtension]) -> str:
+def transform(file_paths: List[str], prg: str = "", extensions: Optional[List[ReifyExtension]] = None) -> str:
     """
     Transform the given files using the provided extensions.
 
@@ -79,7 +79,8 @@ def transform_files(file_paths: List[str], extensions: List[ReifyExtension]) -> 
     Returns:
         str: The transformed program string.
     """
-    program_string = ""
+    extensions = extensions or []
+    program_string = prg
     for extension in extensions:
         log.info("Applying transformation for extension: %s", extension.__class__.__name__)
         program_string = extension.transform(file_paths, program_string)

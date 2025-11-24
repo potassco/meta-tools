@@ -5,7 +5,7 @@ Test cases for main application functionality.
 import tempfile
 from unittest import TestCase
 
-from meta_tools import classic_reify, transform_files
+from meta_tools import classic_reify, transform
 from meta_tools.extensions.show.show_extension import ShowExtension
 from meta_tools.extensions.tag.tag_extension import TAG_THEORY, TagExtension
 
@@ -58,7 +58,7 @@ class TestMain(TestCase):
         print(actual_symbols)
         self.assertSetEqual(actual_symbols, expected_symbols)
 
-    def test_transform_files(self) -> None:
+    def test_transform(self) -> None:
         """
         Test the file transformer.
         """
@@ -75,7 +75,7 @@ class TestMain(TestCase):
             TagExtension(include_fo=False),
             ShowExtension(),
         ]
-        transformed_program = transform_files([temp_file_path], extensions)
+        transformed_program = transform([temp_file_path], extensions= extensions)
         self.assertIn(
             TAG_THEORY.replace("\n", "").replace(" ", ""), transformed_program.replace("\n", "").replace(" ", "")
         )
