@@ -1,4 +1,3 @@
-
 """
 Base class for reification extensions.
 Should be inherited by all extensions.
@@ -9,6 +8,7 @@ from typing import List
 
 from clingo import Control
 from clingo.ast import AST, parse_files, parse_string
+
 
 class ReifyExtension:
     """Base class for reification extensions. Should be inherited by all extensions."""

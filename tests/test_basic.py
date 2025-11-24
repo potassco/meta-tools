@@ -75,7 +75,7 @@ class TestMain(TestCase):
             TagExtension(include_fo=False),
             ShowExtension(),
         ]
-        transformed_program = transform([temp_file_path], extensions= extensions)
+        transformed_program = transform([temp_file_path], extensions=extensions)
         self.assertIn(
             TAG_THEORY.replace("\n", "").replace(" ", ""), transformed_program.replace("\n", "").replace(" ", "")
         )
