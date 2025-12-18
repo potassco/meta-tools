@@ -2,7 +2,7 @@ import logging
 import re
 import sys
 from importlib.resources import path
-from typing import Optional
+from typing import List, Optional, Tuple
 
 from clingo import Control, String, Number
 from clingo import ast as _ast
@@ -107,7 +107,7 @@ class TagTransformer(_ast.Transformer):
         self._include_loc = include_loc
         self._include_program = include_program
         self._include_id = include_id
-        self._current_program = ("base", [])
+        self._current_program: tuple[str, list[_ast.AST]] = ("base", [])  #
         self._rule_id_counter = 0
 
     def _save_rule_tag(self, node: _ast.AST) -> None:

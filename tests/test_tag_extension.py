@@ -38,6 +38,30 @@ class TestTag(TestCase):
         for expected_rule in expected_rules:
             self.assertIn(expected_rule.strip(), transformed_prg_rules)
 
+    def test_tag_rule_defaults(self) -> None:
+        """
+        Test the tag transformer.
+        """
+        extender = TagExtension(include_loc=True, include_id=True, include_fo=False, include_program=True)
+        input_program = """
+        a(X) :- b(X).
+        b(1).
+        b(2).
+        """
+        with open("/tmp/test_tag_input.lp", "w", encoding="utf-8") as f:
+            f.write(input_program)
+
+        expected_program = """
+        a(X) :- b(X); &tag_rule(rule_loc(9,"/tmp/test_tag_input.lp",2)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(1)) { }.
+        b(1) :- &tag_rule(rule_loc(9,"/tmp/test_tag_input.lp",3)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(2)) { }.
+        b(2) :- &tag_rule(rule_loc(9,"/tmp/test_tag_input.lp",4)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(3)) { }.
+        """
+        expected_rules = expected_program.strip().splitlines()
+        transformed_prg = extender.transform(file_paths=["/tmp/test_tag_input.lp"], program_string="")
+        transformed_prg_rules = transformed_prg.strip().splitlines()
+        for expected_rule in expected_rules:
+            self.assertIn(expected_rule.strip(), transformed_prg_rules)
+
     def test_tag_atoms(self) -> None:
         """
         Test the tag transformer.

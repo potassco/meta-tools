@@ -4,7 +4,7 @@ The meta_tools project.
 
 import logging
 from importlib.resources import path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Sequence, Tuple
 
 from clingo import Control, Symbol
 from clingox.reify import Reifier
@@ -50,7 +50,7 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
 
 
 def classic_reify(
-    ctl_args: List[str], program_string: str, programs: Optional[List[Tuple[str, List[str]]]] = None
+    ctl_args: List[str], program_string: str, programs: Optional[Sequence[tuple[str, Sequence[Symbol]]]] = None
 ) -> List[Symbol]:
     """
     Reify the given program string using classic reification.
