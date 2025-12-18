@@ -4,7 +4,7 @@ import sys
 from importlib.resources import path
 from typing import Optional
 
-from clingo import Control, String
+from clingo import Control, String, Number
 from clingo import ast as _ast
 from clingo.ast import parse_string
 
@@ -24,15 +24,25 @@ TAG_THEORY = """
 class TagExtension(ReifyExtension):
     """Extension to show the reified program."""
 
-    def __init__(self, include_fo: bool = True, include_loc: bool = False) -> None:
+    def __init__(
+        self,
+        include_fo: bool = True,
+        include_loc: bool = False,
+        include_program: bool = False,
+        include_id: bool = False,
+    ) -> None:
         """
         Initialize the Tag extension.
         Args:
             include_fo (bool): Whether to include first-order representation for each rule as a tag.
             include_loc (bool): Whether to include location information in the tags.
+            include_program (bool): Whether to include the program information in the tags, such as base.
+            include_id (bool): Whether to include unique rule IDs in the tags. This would be used for the first order representation.
         """
         super().__init__()
-        self.transformer = TagTransformer(include_fo=include_fo, include_loc=include_loc)
+        self.transformer = TagTransformer(
+            include_fo=include_fo, include_loc=include_loc, include_program=include_program, include_id=include_id
+        )
 
     def visit_ast(self, ast: _ast.AST) -> _ast.AST:
         """
@@ -75,18 +85,30 @@ class TagTransformer(_ast.Transformer):
     The rule_type can be one of "rule", "fact", or "constraint". It is determined based on the structure of the rule.
     """
 
-    def __init__(self, include_fo: bool = True, include_loc: bool = False) -> None:
+    def __init__(
+        self,
+        include_fo: bool = True,
+        include_loc: bool = False,
+        include_program: bool = False,
+        include_id: bool = False,
+    ) -> None:
         """
         Initialize the TagTransformer.
         Args:
             include_fo (bool): Whether to include first-order representation for each rule as a tag
             include_loc (bool): Whether to include location information in the tags.
+            include_program (bool): Whether to include the program information in the tags, such as base.
+            include_id (bool): Whether to include unique rule IDs in the tags. This would be used for the first order representation.
         """
         super().__init__()
         self._rule_tags: set[_ast.AST] = set([])
         self._atom_rules: set[_ast.AST] = set([])
         self._include_fo = include_fo
         self._include_loc = include_loc
+        self._include_program = include_program
+        self._include_id = include_id
+        self._current_program = ("base", [])
+        self._rule_id_counter = 0
 
     def _save_rule_tag(self, node: _ast.AST) -> None:
         """
@@ -214,6 +236,90 @@ class TagTransformer(_ast.Transformer):
 
         node.body.insert(len(node.body), theory_tag_literal)
 
+    def _add_id(self, node: _ast.AST) -> None:
+        """
+        Add the unique ID tag to the rules a tag rule_id(id).
+        Args:
+            node (_ast.AST): The AST rule node to process.
+        """
+        self._rule_id_counter += 1
+        f = (
+            _ast.Function(
+                node.location,
+                "rule_id",
+                [
+                    _ast.SymbolicTerm(
+                        node.location,
+                        Number(
+                            int(self._rule_id_counter),
+                        ),
+                    ),
+                ],
+                0,
+            ),
+        )
+        theory_tag_literal = self._construct_theory_atom_literal(node.location, f[0])
+        node.body.insert(len(node.body), theory_tag_literal)
+
+    def _add_loc_tag(self, node: _ast.AST) -> None:
+        """
+        Add the tag with the location information of the rules a tag rule_loc(column, filename, line).
+        Args:
+            node (_ast.AST): The AST rule node to process.
+        """
+        l = node.location.begin
+        f = (
+            _ast.Function(
+                node.location,
+                "rule_loc",
+                [
+                    _ast.SymbolicTerm(
+                        node.location,
+                        Number(
+                            int(l.column),
+                        ),
+                    ),
+                    _ast.SymbolicTerm(
+                        node.location,
+                        String(
+                            str(l.filename),
+                        ),
+                    ),
+                    _ast.SymbolicTerm(
+                        node.location,
+                        Number(
+                            int(l.line),
+                        ),
+                    ),
+                ],
+                0,
+            ),
+        )
+
+        theory_tag_literal = self._construct_theory_atom_literal(node.location, f[0])
+        node.body.insert(len(node.body), theory_tag_literal)
+
+    def _add_program_tag(self, node: _ast.AST) -> None:
+        """
+        Add the program information tag to the rule body.
+        Args:
+            node (_ast.AST): The AST rule node to process.
+        """
+        f = (
+            _ast.Function(
+                node.location,
+                "program",
+                [
+                    _ast.Function(node.location, self._current_program[0], self._current_program[1], False),
+                ],
+                0,
+            ),
+        )
+
+        theory_tag_literal = self._construct_theory_atom_literal(node.location, f[0])
+
+        node.body.insert(len(node.body), theory_tag_literal)
+
     def _add_saved_tags(self, node: _ast.AST) -> None:
         """
         Add saved tags to the rule body.
@@ -246,7 +352,20 @@ class TagTransformer(_ast.Transformer):
         """
         if self._include_fo:
             self._add_fo_tag(node)
+        if self._include_loc:
+            self._add_loc_tag(node)
+        if self._include_program:
+            self._add_program_tag(node)
+        if self._include_id:
+            self._add_id(node)
         self._add_saved_tags(node)
 
         final_node = node.update(**self.visit_children(node))
         return final_node
+
+    def visit_Program(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
+        """
+        Handle program nodes to keep track of the current program name.
+        """
+        self._current_program = (node.name, node.parameters)
+        return node
