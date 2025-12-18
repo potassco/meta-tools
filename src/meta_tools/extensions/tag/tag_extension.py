@@ -2,9 +2,9 @@ import logging
 import re
 import sys
 from importlib.resources import path
-from typing import List, Optional, Tuple
+from typing import Optional
 
-from clingo import Control, String, Number
+from clingo import Control, Number, String
 from clingo import ast as _ast
 from clingo.ast import parse_string
 
