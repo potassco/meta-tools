@@ -55,15 +55,18 @@ class TestTag(TestCase):
             test_file_path = f.name
             f.close()
 
+            escaped_path = test_file_path.replace("\\", "\\\\")
+
             expected_program = """
             a(X) :- b(X); &tag_rule(rule_loc(9,"%s",2)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(1)) { }.
             b(1) :- &tag_rule(rule_loc(9,"%s",3)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(2)) { }.
             b(2) :- &tag_rule(rule_loc(9,"%s",4)) { }; &tag_rule(program(base)) { }; &tag_rule(rule_id(3)) { }.
             """ % (
-                test_file_path,
-                test_file_path,
-                test_file_path,
+                escaped_path,
+                escaped_path,
+                escaped_path,
             )
+
             expected_rules = expected_program.strip().splitlines()
             transformed_prg = extender.transform(file_paths=[test_file_path], program_string="")
             transformed_prg_rules = transformed_prg.strip().splitlines()
