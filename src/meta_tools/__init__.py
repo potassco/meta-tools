@@ -14,9 +14,9 @@ from meta_tools.extensions import ReifyExtension
 log = logging.getLogger(__name__)
 
 
+# pylint: disable=too-few-public-methods
 class Context:
-
-    pass
+    "Context for grounding with extensions. Includes functions that can be called as external python function via @"
 
 
 def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], clean_output: bool = True) -> str:
