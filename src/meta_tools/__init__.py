@@ -14,6 +14,11 @@ from meta_tools.extensions import ReifyExtension
 log = logging.getLogger(__name__)
 
 
+class Context:
+
+    pass
+
+
 def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], clean_output: bool = True) -> str:
     """
 
@@ -37,16 +42,20 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
         ctl.load(str(encoding))
     if clean_output:
         ctl.add("base", [], "#show .")
+    context = Context()
     for ext in extensions:
         ext.add_extension_encoding(ctl)
-    ctl.ground([("base", [])])
+        ext.update_context(context)
+
+    ctl.ground([("base", [])], context=context)
     result = []
     with ctl.solve(yield_=True) as handle:
         for model in handle:
             show_atoms = not clean_output
             for sym in model.symbols(shown=True, atoms=show_atoms):
                 result.append(str(sym) + ".")
-    return "\n".join(result)
+    extra_facts = [str(sym) + "." for e in extensions for sym in e.additional_symbols()]
+    return "\n".join(result + extra_facts)
 
 
 def classic_reify(

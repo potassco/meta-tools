@@ -9,6 +9,7 @@
 #show literal_tuple(B,L): literal_tuple(B,L), not hide(atom(L)), not hide(atom(-L)), not hide(literal_tuple(B)).
 #show rule(H,B):rule(H,B), not hide(rule(H,B)).
 #show external(A,V):external(A,V), not hide(external(A,V)).
+#show output(A,L):output(A,L), not hide(output(A,L)).
 
 
 % TODO: Only show the theory things that are not hidden,
