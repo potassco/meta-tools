@@ -98,4 +98,5 @@ def transform(file_paths: List[str], prg: str = "", extensions: Optional[List[Re
         log.info("Applying transformation for extension: %s", extension.__class__.__name__)
         program_string = extension.transform(file_paths, program_string)
         file_paths = []  # Clear file paths after the first extension
+
     return program_string

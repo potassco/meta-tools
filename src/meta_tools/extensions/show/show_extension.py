@@ -61,6 +61,10 @@ class ShowTransformer(_ast.Transformer):
     def visit_ShowSignature(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
         self.hide_all = True
         loc = node.location
+        if node.name == "":
+            return _ast.Rule(
+                loc, _ast.Literal(loc, _ast.Sign.NoSign, _ast.Function(loc, self.show_fun_name, [], False)), []
+            )
         args = []
         for i in range(node.arity):
             args.append(_ast.Variable(loc, f"V{i}"))
