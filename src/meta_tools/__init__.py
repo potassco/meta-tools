@@ -30,14 +30,14 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
         extensions (List[ReifyExtension]): The list of extensions to apply.
         clean_output (bool, optional): Whether to clean the output by hiding non-essential atoms. Defaults to True.
         If clean_output is True, it adds a "#show ." directive to hide all atoms
-        not explicitly shown by the extensions or the `extension_show.lp` file.
+        not explicitly shown by the extensions or the `show_unhidden.lp` file.
 
     Returns:
         str: The extended reified program.
     """
     ctl = Control(["--warn=none"])
     ctl.add("base", [], reified_out_prg)
-    with path("meta_tools.encodings", "extension_show.lp") as encoding:
+    with path("meta_tools.encodings", "show_unhidden.lp") as encoding:
         log.debug("Loading encoding: %s", encoding)
         ctl.load(str(encoding))
     if clean_output:
