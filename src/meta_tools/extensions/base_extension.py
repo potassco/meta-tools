@@ -6,7 +6,7 @@ Should be inherited by all extensions.
 from argparse import _ArgumentGroup
 from typing import List
 
-from clingo import Control
+from clingo import Control, Symbol
 from clingo.ast import AST, parse_files, parse_string
 
 
@@ -58,6 +58,15 @@ class ReifyExtension:
 
         return prg
 
+    def update_context(self, context: object) -> None:
+        """
+        Update the given context with any methods needed by the extension.
+        Arguments
+        ---------
+        context
+            Target context to update.
+        """
+
     def add_extension_encoding(self, ctl: Control) -> None:
         """
         Add the extension's encoding to the given control object.
@@ -67,3 +76,11 @@ class ReifyExtension:
         ctl
             Target control object.
         """
+
+    def additional_symbols(self) -> List[Symbol]:
+        """
+        Gives a list of additional symbols to be added to the reification.
+        Returns:
+            List[Symbol]: The list of additional symbols.
+        """
+        return []

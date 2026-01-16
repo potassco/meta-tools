@@ -41,6 +41,8 @@ attr(graph_edges, default, arrowtail, none).
 attr(graph_edges, default, arrowhead, none).
 
 attr(node,N,label,"<<FONT FACE='Monospace' POINT-SIZE='9pt'>{{name}}</FONT>{% if value is defined %} <br/><br/> <FONT POINT-SIZE='10pt'> <i><b>{{value}} </b></i></FONT> {% else %} {% endif %}>") :- node(N).
+% attr(node,N,label,@html_escape(N)) :- node(N).
+% attr(node,N,(label,name),"HI") :- node(N).
 attr(node,N,(label,name),@html_escape(N)) :- node(N).
 attr(node,N,style,filled) :- node(N), not attr(node,N,shape,plaintext).
 attr(edge,(N1,N2),fontsize,8):-edge((N1,N2)).
@@ -79,7 +81,7 @@ attr(edge,(literal_tuple(B),show(O,B)),style,dotted) :- show(O,B).
 % Custom tag
 tag_escaped(X,@replace(T,":","")):-tag(X,T).
 node(tag(X,T)) :- tag_escaped(X,T).
-attr(node,tag(X,T), (label,value), @concat("@",T)) :- tag_escaped(X,T).
+attr(node,tag(X,T), (label,value), @concat("@",@html_escape(T))) :- tag_escaped(X,T).
 attr(node,tag(X,T), fillcolor, none) :- tag_escaped(X,T).
 attr(node,tag(X,T), shape, none) :- tag_escaped(X,T).
 edge((rule(H,B),tag(rule(H,B),T))) :- tag_escaped(rule(H,B),T).
@@ -123,6 +125,10 @@ attr(edge, (literal_tuple(I),literal_tuple(I,E)), arrowhead, dot):-literal_tuple
 % Literals as body of a rule
 edge((rule(H,normal(B)),literal_tuple(B))):-rule(H,normal(B)).
 attr(edge,(rule(H,normal(B)),literal_tuple(B)),label,"body"):-rule(H,normal(B)).
+
+% Literals as body of a rule
+edge((rule(H,sum(B,G)),literal_tuple(B))):-rule(H,sum(B,G)).
+attr(edge,(rule(H,sum(B,G)),literal_tuple(B)),label,"body"):-rule(H,sum(B,G)).
 
 % Atoms as choice head of a rule
 edge((rule(choice(H),B),atom_tuple(H))):-rule(choice(H),B).
