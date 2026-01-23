@@ -7,8 +7,12 @@
 #show atom_tuple(T,A):atom_tuple(T,A), not hide(atom(A)).
 #show literal_tuple(B): literal_tuple(B), not hide(literal_tuple(B)).
 #show literal_tuple(B,L): literal_tuple(B,L), not hide(atom(L)), not hide(atom(-L)), not hide(literal_tuple(B)).
+#show weighted_literal_tuple(B): weighted_literal_tuple(B), not hide(weighted_literal_tuple(B)).
+#show weighted_literal_tuple(B,L,G): weighted_literal_tuple(B,L,G), not hide(atom(L)), not hide(atom(-L)), not hide(weighted_literal_tuple(B)).
+
 #show rule(H,B):rule(H,B), not hide(rule(H,B)).
 #show external(A,V):external(A,V), not hide(external(A,V)).
+#show output(A,L):output(A,L), not hide(output(A,L)).
 
 
 % TODO: Only show the theory things that are not hidden,

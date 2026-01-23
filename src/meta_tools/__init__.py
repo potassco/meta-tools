@@ -14,6 +14,11 @@ from meta_tools.extensions import ReifyExtension
 log = logging.getLogger(__name__)
 
 
+# pylint: disable=too-few-public-methods
+class Context:
+    "Context for grounding with extensions. Includes functions that can be called as external python function via @"
+
+
 def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], clean_output: bool = True) -> str:
     """
 
@@ -25,28 +30,32 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
         extensions (List[ReifyExtension]): The list of extensions to apply.
         clean_output (bool, optional): Whether to clean the output by hiding non-essential atoms. Defaults to True.
         If clean_output is True, it adds a "#show ." directive to hide all atoms
-        not explicitly shown by the extensions or the `extension_show.lp` file.
+        not explicitly shown by the extensions or the `show_unhidden.lp` file.
 
     Returns:
         str: The extended reified program.
     """
     ctl = Control(["--warn=none"])
     ctl.add("base", [], reified_out_prg)
-    with path("meta_tools.encodings", "extension_show.lp") as encoding:
+    with path("meta_tools.encodings", "show_unhidden.lp") as encoding:
         log.debug("Loading encoding: %s", encoding)
         ctl.load(str(encoding))
     if clean_output:
         ctl.add("base", [], "#show .")
+    context = Context()
     for ext in extensions:
         ext.add_extension_encoding(ctl)
-    ctl.ground([("base", [])])
+        ext.update_context(context)
+
+    ctl.ground([("base", [])], context=context)
     result = []
     with ctl.solve(yield_=True) as handle:
         for model in handle:
             show_atoms = not clean_output
             for sym in model.symbols(shown=True, atoms=show_atoms):
                 result.append(str(sym) + ".")
-    return "\n".join(result)
+    extra_facts = [str(sym) + "." for e in extensions for sym in e.additional_symbols()]
+    return "\n".join(result + extra_facts)
 
 
 def classic_reify(
@@ -89,4 +98,5 @@ def transform(file_paths: List[str], prg: str = "", extensions: Optional[List[Re
         log.info("Applying transformation for extension: %s", extension.__class__.__name__)
         program_string = extension.transform(file_paths, program_string)
         file_paths = []  # Clear file paths after the first extension
+
     return program_string
