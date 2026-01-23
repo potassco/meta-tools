@@ -1,24 +1,30 @@
 % New predicates
-show(X,B):-
+show_atom(X,B):-
     rule(disjunction(H),normal(B)),
     atom_tuple(H,L),
-    symbol_literal(_show(X),L).
+    symbol_literal(_show_atom(X),L).
+
+show_term(X,B):-
+    rule(disjunction(H),normal(B)),
+    atom_tuple(H,L),
+    symbol_literal(_show_term(X),L).
 
 show :- output(_show, _).
 
-internal_show_symbol(_show(X)):- output(_show(X), _).
-internal_show_symbol(_show):- output(_show, _).
-
-% #show show(X,B):explicit_show(X,B).
-% #show show(X,B):output(X,B), not output(_show, _).
-% #show show_hide:output(_show,B).
-#show show/2.
+#show show_atom/2.
+#show show_term/2.
 #show show/0.
 
-% Symbol table
-symbol_literal(F,L):- output(F,B), literal_tuple(B,L).
-aux_show_atom(S):- symbol_literal(S,L), internal_show_symbol(S).
-#show symbol_literal(F,L):symbol_literal(F,L), not aux_show_atom(F).
+
+% Symbol table linking to literals
+symbol_literal(S,L):- output(S,B), literal_tuple(B,L).
+#show symbol_literal(S,L):symbol_literal(S,L), not reserved(_,S).
+
+
+reserved(show,_show_atom(X)):- output(_show_atom(X), _).
+reserved(show,_show_term(X)):- output(_show_term(X), _).
+reserved(show,_show):- output(_show, _).
+
 
 
 % Hiden predicates
@@ -27,25 +33,25 @@ hide(rule(disjunction(H),normal(B))):-
     rule(disjunction(H),normal(B)),
     atom_tuple(H,L),
     symbol_literal(S,L),
-    internal_show_symbol(S).
+    reserved(show,S).
 
 hide(atom(L)):-
     rule(disjunction(H),normal(B)),
     atom_tuple(H,L),
     symbol_literal(S,L),
-    internal_show_symbol(S).
+    reserved(show,S).
 
 hide(atom_tuple(H)):-
     rule(disjunction(H),normal(B)),
     atom_tuple(H,L),
     symbol_literal(S,L),
-    internal_show_symbol(S).
+    reserved(show,S).
 
 hide(literal_tuple(B)):-
     literal_tuple(B,L),
     symbol_literal(S,L),
-    internal_show_symbol(S).
+    reserved(show,S).
 
 hide(output(S,B)):-
     output(S,B),
-    internal_show_symbol(S).
+    reserved(show,S).

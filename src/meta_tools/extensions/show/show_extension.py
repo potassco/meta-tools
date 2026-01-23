@@ -34,8 +34,6 @@ class ShowExtension(ReifyExtension):
         Adds rules to hide all atoms not explicitly shown.
         """
         prg = super().transform(file_paths, program_string)
-        if self.transformer.hide_all:
-            prg += f"{self.transformer.show_fun_name}.\n"
         return prg
 
 
@@ -46,6 +44,8 @@ class ShowTransformer(_ast.Transformer):
     """
 
     show_fun_name: str = "_show"
+    show_fun_term_name: str = "_show_term"
+    show_fun_pred_name: str = "_show_atom"
 
     def __init__(self) -> None:
         super().__init__()
@@ -53,7 +53,7 @@ class ShowTransformer(_ast.Transformer):
 
     def visit_ShowTerm(self, node: _ast.AST) -> _ast.AST:  # pylint: disable=C0103
         loc = node.location
-        show_atom = _ast.Function(loc, self.show_fun_name, [_ast.SymbolicAtom(node.term)], False)
+        show_atom = _ast.Function(loc, self.show_fun_term_name, [_ast.SymbolicAtom(node.term)], False)
         head = _ast.Literal(loc, _ast.Sign.NoSign, show_atom)
         rule = _ast.Rule(loc, head, node.body)
         return rule
@@ -69,7 +69,7 @@ class ShowTransformer(_ast.Transformer):
         for i in range(node.arity):
             args.append(_ast.Variable(loc, f"V{i}"))
         sig_as_atom = _ast.Function(loc, node.name, args, False)
-        show_atom = _ast.Function(loc, self.show_fun_name, [sig_as_atom], False)
+        show_atom = _ast.Function(loc, self.show_fun_pred_name, [sig_as_atom], False)
         head = _ast.Literal(loc, _ast.Sign.NoSign, show_atom)
         body = [_ast.Literal(loc, _ast.Sign.NoSign, sig_as_atom)]
 
