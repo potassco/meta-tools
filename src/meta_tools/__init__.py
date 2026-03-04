@@ -59,7 +59,10 @@ def extend_reification(reified_out_prg: str, extensions: List[ReifyExtension], c
 
 
 def classic_reify(
-    ctl_args: List[str], program_string: str, programs: Optional[Sequence[tuple[str, Sequence[Symbol]]]] = None
+    ctl_args: List[str],
+    program_string: str,
+    programs: Optional[Sequence[tuple[str, Sequence[Symbol]]]] = None,
+    files: Optional[List[str]] = None,
 ) -> List[Symbol]:
     """
     Reify the given program string using classic reification.
@@ -68,6 +71,7 @@ def classic_reify(
         ctl_args (List[str]): The list of control arguments.
         program_string (str): The program string to reify.
         programs (Optional[Tuple[str, List[str]]]): The list of programs to ground. By default is [("base", [])].
+        files (Optional[List[str]]): The list of files to load into the control.
     Returns:
         List[Symbol]: The list of symbols defining the reification.
     """
@@ -76,6 +80,9 @@ def classic_reify(
     reifier = Reifier(rsymbols.append, reify_steps=False)
     ctl.register_observer(reifier)
     ctl.add("base", [], program_string)
+    if files:
+        for file in files:
+            ctl.load(file)
     programs = programs or [("base", [])]
     ctl.ground(programs)
     return rsymbols
