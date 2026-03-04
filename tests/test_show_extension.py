@@ -23,8 +23,7 @@ class TestShow(TestCase):
         """
         expected_program = """
         a.
-        _show(a) :- a.
-        _show.
+        _show_atom(a) :- a.
         """
         expected_rules = expected_program.strip().splitlines()
         transformed_prg = extender.transform([], input_program)
@@ -43,7 +42,7 @@ class TestShow(TestCase):
         """
         expected_program = """
         a.
-        _show(b) :- a.
+        _show_term(b) :- a.
         """
         expected_rules = expected_program.strip().splitlines()
         transformed_prg = extender.transform([], input_program)
@@ -60,10 +59,11 @@ class TestShow(TestCase):
         input_program = """
         a(1,2).
         #show a/2.
+        #show.
         """
         expected_program = """
         a(1,2).
-        _show(a(V0,V1)) :- a(V0,V1).
+        _show_atom(a(V0,V1)) :- a(V0,V1).
         _show.
         """
         expected_rules = expected_program.strip().splitlines()
