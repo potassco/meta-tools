@@ -1,6 +1,6 @@
 # Changes
 
-## v0.3.7
+## v0.3.8
 
 - Added files as input for classic reify function
 

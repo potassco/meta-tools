@@ -40,6 +40,14 @@ class TestMain(TestCase):
         actual_symbols = {str(s).rstrip(".") for s in rsymbols}
         self.assertSetEqual(actual_symbols, expected_symbols)
 
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".lp") as temp_file:
+            temp_file.write(input_program)
+            temp_file.flush()
+            temp_file_path = temp_file.name
+            rsymbols = classic_reify(["--preserve-facts=symtab"], "", files=[temp_file_path])
+            actual_symbols = {str(s).rstrip(".") for s in rsymbols}
+            self.assertSetEqual(actual_symbols, expected_symbols)
+
         rsymbols = classic_reify([], input_program)
         expected_symbols = {
             "tag(incremental)",
